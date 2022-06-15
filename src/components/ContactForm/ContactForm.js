@@ -1,10 +1,14 @@
 import {useState} from "react";
 import s from "./ContactForm.module.css";
-// import PropTypes from "prop-types";
-// import { editableInputTypes } from "@testing-library/user-event/dist/utils";
+import {addContact} from '../../redux/store'
+import { useDispatch, useSelector } from "react-redux";
 
+export default function ContactForm () {
 
-export default function ContactForm ({formSubmitHandler}) {
+    const contacts = useSelector(state => (state.contacts.items));
+
+    const dispatch = useDispatch()
+
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
 
@@ -24,16 +28,28 @@ export default function ContactForm ({formSubmitHandler}) {
                 return;
         }
     }
+
+
     const  reset = () => {
         setName('');
         setNumber('');
     }
-
+    
     const handleSubmit = (e) =>{
         e.preventDefault();
-        formSubmitHandler(name, number);
-        reset();
-    }
+        
+        const sameContact  = contacts.find(contact => {
+            return contact.name.toLowerCase() === name.toLowerCase();
+        })
+
+            if (!sameContact ){
+            dispatch(addContact(name, number));
+            reset();
+            return;
+            } 
+            alert(`${name} is already to contacts`); 
+            reset();
+        }
 
 
     return (
@@ -47,7 +63,7 @@ export default function ContactForm ({formSubmitHandler}) {
                 pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                 title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                 required
-                onChange={handleChange}
+                onChange={handleChange} 
                 />
             </label>
             <label className={s.label}>
@@ -63,7 +79,7 @@ export default function ContactForm ({formSubmitHandler}) {
                 />
             </label>
 
-            <button className={s.button} type="submit">Add contact</button>
+            <button className={s.button} type="submit" >Add contact</button>
         </form>
     )
 }
