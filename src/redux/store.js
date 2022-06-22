@@ -30,7 +30,7 @@ export const addContact = createAction('addContact',
 );
 
 
-const items = createReducer([{name: 'Nata', id:'01',  number: '0999999999' }], {
+const items = createReducer([], {
   [addContact]: (state, { payload }) => [payload, ...state],
   [deleteContact]: (state, { payload }) => state.filter(contact => contact.id !== payload),
 });
